@@ -1,4 +1,4 @@
-baseURL: "https://adityatelange.github.io/" # if your site is in 'https', then make sure your base url isn't written using 'http' otherwise your sitemap would contain http (as opposeed to https) URLs. This would affect Google indexing of your URLs.
+baseURL: "https://mtabbasi.ir/" # if your site is in 'https', then make sure your base url isn't written using 'http' otherwise your sitemap would contain http (as opposeed to https) URLs. This would affect Google indexing of your URLs.
 title: Mohammadtaher Abbasi
 paginate: 5
 theme: PaperMod
@@ -49,8 +49,8 @@ languages:
     weight: 3
     title: محمدطاهر عباسی
     homeInfoParams:
-      Title: "Hi there \U0001F44B"
-      Content: وبلاگ محمدطاهر عباسی
+      Title: "📝 وبلاگ محمدطاهر عباسی"
+      Content:
     taxonomies:
       category: categories
       tag: tags
@@ -79,8 +79,8 @@ outputs:
 
 params:
   env: production # to enable google analytics, opengraph, twitter-cards and schema.
-  description: "Theme PaperMod - https://github.com/adityatelange/hugo-PaperMod"
-  author: Theme PaperMod
+  description: "Mohammadtaher Abbasi's blog"
+  author: Mohammadtaher Abbasi
   # author: ["Me", "You"] # multiple authors
   hideFooter: true
   defaultTheme: auto
