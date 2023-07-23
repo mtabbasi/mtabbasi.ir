@@ -7,6 +7,11 @@ tags: ["opensees", "tcl", "python"]
 customCss: ["https://pyscript.net/latest/pyscript.css", "/css/prism (3).css", "/css/prism-live.css", "/css/prism-line-numbers.css"]
 customJs: ["https://pyscript.net/latest/pyscript.js", "/js/prism (3).js", "/js/prism-live.js", "/js/prism-line-numbers.js"]
 categories: ["app"]
+cover: 
+    image: "/img/2.png"
+    alt: "opensees(tcl) to python converter"
+    caption: ""
+    hidden: false
 ---
 
 :warning: **Before using this app please checkout [notes](#notes)**
