@@ -4,8 +4,8 @@ description: "Convert an OpenSees(Tcl) script to OpenSeesPy"
 date: 2023-07-20
 draft: false
 tags: ["opensees", "tcl", "python"]
-customCss: ["https://pyscript.net/latest/pyscript.css", "/css/prism (3).css", "/css/prism-live.css", "/css/prism-line-numbers.css"]
-customJs: ["https://pyscript.net/latest/pyscript.js", "/js/prism (3).js", "/js/prism-live.js", "/js/prism-line-numbers.js"]
+customCss: ["/css/prism (3).css", "/css/prism-live.css", "/css/prism-line-numbers.css"]
+customJs: [ "/js/prism (3).js", "/js/prism-live.js", "/js/prism-line-numbers.js"]
 categories: ["app"]
 cover: 
     image: "/img/2.png"
@@ -40,122 +40,144 @@ cover:
 ### Enter your tcl code with considering [notes](#notes) in below box
 
 {{< rawhtml >}}
-<textarea  py-input="convert()" class="prism-live line-numbers language-tcl fill"></textarea>
-
+<textarea oninput="convert()" class="prism-live line-numbers language-tcl fill"></textarea>
 
 <h3>The openseespy result</h3>
 <textarea id='python' class="prism-live line-numbers language-python fill"></textarea>
 
-<py-script>
-import js
-from js import highlight
 
-
-def isfloat(value):
-    try:
-        float(value)
-        return True
-    except ValueError:
-        return False
-
-def convert():
-    alias = "ops"
-    outfile = "import openseespy.opensees as ops\n\n"
-    infile = js.document.querySelector("code.language-tcl").innerText
-    # Add a dot if needed
-    if len(alias) > 0 and alias[-1] != ".":
-        alias = alias + "."
-
-    for line in infile.splitlines():
-        info = line.split()
-        N = len(info)
-
-        # Skip a blank line
-        if N < 1:
-            outfile += "\n"
-            continue
-            # Ignore a close brace
-        if info[0][0] == "}":
-            continue
-        # Echo a comment line
-        if info[0][0] == "#":
-            outfile += line
-            continue
-
-        # Change print to printModel
-        if info[0] == "print":
-            info[0] = "printModel"
-
-        # A command with no arguments, e.g., wipe
-        if N == 1:
-            outfile += f"{alias}{info[0]}()\n"
-            continue
-
-        # Needs to be a special case due to beam integration
-        if N >= 8 and info[1] in [
-            "nonlinearBeamColumn",
-            "forceBeamColumn",
-            "dispBeamColumn",
-        ]:
-            eleTag = info[2]
-            secTag = info[6]
-            # The original element format
-            # element beamColumn tag ndI ndJ Np secTag transfTag
-            #    0        1       2   3   4   5    6       7
-            if isfloat(secTag):
-                Np = info[5]
-                transfTag = info[7]
-                if info[1] == "dispBeamColumn":
-                    outfile += (
-                        f"{alias}beamIntegration('Legendre',{eleTag},{secTag},{Np})\n"
-                    )
-
-                else:
-                    outfile += (
-                        f"{alias}beamIntegration('Lobatto',{eleTag},{secTag},{Np})\n"
-                    )
-
-            # The newer element format
-            # element beamColumn tag ndI ndJ transfTag integrType ...
-            #    0        1       2   3   4      5         6
-            else:
-                transfTag = info[5]
-                outfile += f"{alias}beamIntegration('{info[6]}',{eleTag}"
-                for j in range(7, N):
-                    outfile += f",{info[j]}"
-                outfile += ")\n"
-            if info[1] == "nonlinearBeamColumn":
-                info[1] = "forceBeamColumn"
-            outfile += f"{alias}element('{info[1]}',{eleTag},{info[3]},{info[4]},{transfTag},{eleTag})\n"
-            continue
-
-        # Have to do the first argument before loop because of the commas
-        if isfloat(info[1]):
-            outfile += f"{alias}{info[0]}({info[1]}"
-        else:
-            outfile += f"{alias}{info[0]}('{info[1]}'"
-        # Now loop through the remaining arguments with preceding commas
-        writeClose = True
-        for i in range(2, N):
-            if info[i] == "{":
-                writeClose = True
-                break
-            if info[i] == "}":
-                writeClose = False
-                break
-            if isfloat(info[i]):
-                outfile += f",{info[i]}"
-            else:
-                outfile += f",'{info[i]}'"
-        if writeClose:
-            outfile += ")\n"
-
-    outfile += "\n\n"
-    js.document.querySelector("code.language-python").innerHTML = highlight(outfile, 'python')
-
-</py-script>
 
 <script>
+function isFloat(v) {
+            if (isNaN(parseFloat(v))) {
+                return false;
+            }
+            return true;
+        }
+function convert() {
+    infile = document.querySelector("code.language-tcl").innerText;
+    var ALIAS = "ops";
+    const arrayRange = (start, stop, step) =>
+        Array.from(
+            { length: (stop - start) / step + 1 },
+            (value, index) => start + index * step
+        );
+    var outfile = "import openseespy.opensees as ops\n\n";
+    if (ALIAS.length > 0 && ALIAS.slice(-1) != ".") {
+        ALIAS += ".";
+    }
+    for (let line of infile.split("\n")) {
+        line = line.trim()
+        let INFO = line.split(" ");
+        INFO = INFO.filter(e => e);
+        let N = INFO.length
+        if (N < 1) {
+            //Skip a blank line
+            outfile += "\n";
+            continue;
+        }
+        if (INFO[0][0] == "}") {
+            //Ignore a close brace
+            continue;
+        }
+        if (INFO[0][0] == "#") {
+            //Echo a comment line
+            outfile += line + "\n";
+            continue;
+        }
+        if (INFO[0] == "print") {
+            // Change print to printModel
+            INFO[0] = "printModel"
+        }
+
+        if (N == 1) {
+            //A command with no arguments, e.g., wipe
+            outfile += `${ALIAS}${INFO[0]}()\n`;
+            continue;
+        }
+
+        if (N >= 8 && ["nonlinearBeamColumn", "forceBeamColumn", "dispBeamColumn"].includes(INFO[1])) {
+            // Needs to be a special case due to beam integration
+            var eleTag = INFO[2];
+            var secTag = INFO[6];
+            /*
+            The original element format
+            element beamColumn tag ndI ndJ Np secTag transfTag
+            0        1       2   3   4   5    6       7
+            */
+            if (isFloat(secTag)) {
+                const Np = INFO[5];
+                const transfTag = INFO[7];
+                if (INFO[1] == "dispBeamColumn") {
+                    outfile += `${ALIAS}beamIntegration('Legendre',${eleTag},${secTag},${Np})\n`;
+                }
+                else {
+                    outfile += `${ALIAS}beamIntegration('Lobatto',${eleTag},${secTag},${Np})\n`;
+                }
+
+            }
+
+            else {
+                /*
+                The newer element format
+                element beamColumn tag ndI ndJ transfTag integrType ...
+                0        1       2   3   4      5         6
+                */
+                const transfTag = INFO[5];
+                outfile += `${ALIAS}beamIntegration('${INFO[6]}',${eleTag}`;
+                for (let j of arrayRange(7, N - 1, 1)) {
+                    outfile += `,${INFO[j]}`;
+                }
+                outfile += ")\n";
+            }
+            if (INFO[1] == "nonlinearBeamColumn") {
+                info[1] = "forceBeamColumn";
+            }
+            outfile += `${ALIAS}element('${INFO[1]}',${eleTag},${INFO[3]},${INFO[4]},${transfTag},${eleTag})\n`;
+            continue;
+        }
+
+        // Have to do the first argument before loop because of the commas
+        if (isFloat(INFO[1])) {
+            outfile += `${ALIAS}${INFO[0]}(${INFO[1]}`;
+        } else {
+            outfile += `${ALIAS}${INFO[0]}('${INFO[1]}'`;
+        }
+
+        // Now loop through the remaining arguments with preceding commas
+
+        var writeClose = true;
+
+        for (let i of arrayRange(2, N - 1, 1)) {
+            if (INFO[i] == "{") {
+                writeClose = true;
+                break;
+            }
+
+            if (INFO[i] == "}") {
+                writeClose = false;
+                break;
+            }
+
+            if (isFloat(INFO[i])) {
+                outfile += `,${INFO[i]}`;
+            } else {
+                outfile += `,'${INFO[i]}'`;
+            }
+
+        }
+
+        if (writeClose) {
+            outfile += ")\n";
+        }
+
+    }
+    outfile += "\n\n";
+    const tcl = document.querySelector("code.language-python");
+    document.querySelector("code.language-python").innerHTML = highlight(outfile, 'python');
+    
+}
+
 function highlight(code, language) {
  if (Prism.languages[language]) {
   return Prism.highlight(code, Prism.languages[language], language);
@@ -164,7 +186,8 @@ function highlight(code, language) {
  }
 }
 window.addEventListener("load", (event) => {
-    let tcl = highlight(`# units: kip, in
+    let tcl = highlight(`
+# units: kip, in
 
 # Remove existing model
 wipe
@@ -213,15 +236,17 @@ pattern Plain 1 1 {
     # Create the nodal load - command: load nodeID xForce yForce
     load 4 100 -50
 }`, 'tcl');
-document.querySelector("code.language-tcl").innerHTML = tcl;
+const el = document.querySelector("code.language-tcl");
+el.innerHTML = tcl;
+convert();
   
 });
 </script>
 
 {{< /rawhtml >}}
 
-
 ## Source code [^2]
+
 {{< gist mtabbasi 266b8b55de8fca9292c540f65c04c109 >}}
 
 [^2]: [https://github.com/OpenSees/OpenSees/blob/master/SCRIPTS/toOpenSeesPy.py](https://github.com/OpenSees/OpenSees/blob/master/SCRIPTS/toOpenSeesPy.py)

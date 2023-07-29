@@ -84,7 +84,7 @@ params:
   # author: ["Me", "You"] # multiple authors
   hideFooter: true
   defaultTheme: auto
-  # disableThemeToggle: true
+  disableThemeToggle: true
   ShowShareButtons: false
   ShowReadingTime: true
   # disableSpecial1stPost: true
