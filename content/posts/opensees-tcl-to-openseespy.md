@@ -8,7 +8,7 @@ customCss: ["/css/prism (3).css", "/css/prism-live.css", "/css/prism-line-number
 customJs: [ "/js/prism (3).js", "/js/prism-live.js", "/js/prism-line-numbers.js"]
 categories: ["app"]
 cover: 
-    image: "/img/2.png"
+    image: "/img/2.webp"
     alt: "opensees(tcl) to python converter"
     caption: ""
     hidden: false
