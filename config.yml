@@ -42,7 +42,6 @@ languages:
           url: tags/
           weight: 10
 
-
   fa:
     languagedirection: rtl
     languageName: "Fa"
@@ -69,7 +68,6 @@ languages:
         - name: جستجو
           url: search/
           weight: 10
-      
 
 outputs:
   home:
@@ -109,10 +107,6 @@ params:
         url: archives
       - name: Tags
         url: tags
-
-  homeInfoParams:
-    Title: "PaperMod"
-    Content: ""
 
   socialIcons:
     - name: github
