@@ -87,7 +87,7 @@ params:
   hideFooter: true
   defaultTheme: auto
   disableThemeToggle: true
-  ShowShareButtons: false
+  ShowShareButtons: true
   ShowReadingTime: true
   # disableSpecial1stPost: true
   displayFullLangName: true
@@ -115,8 +115,14 @@ params:
   socialIcons:
     - name: github
       url: "https://github.com/mtabbasi"
+    - name: email
+      url: "mailto:me@mtabbasi.ir"
     - name: Rss
       url: "index.xml"
+    - name: stackoverflow
+      url: "https://stackoverflow.com/users/12548062/mohammadtaher-abbasi"
+    - name: researchgate
+      url: "https://www.researchgate.net/profile/Mohammadtaher_Abbasi"
 
   # editPost:
   #   URL: "https://github.com/adityatelange/hugo-PaperMod/tree/exampleSite/content"
