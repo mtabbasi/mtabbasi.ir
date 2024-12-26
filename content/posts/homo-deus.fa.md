@@ -2,6 +2,8 @@
 title: "کتابخانه‌های پایتون مورداستفاده در مهندسی سازه"
 date: 2023-10-30T18:48:47+03:30
 draft: false
+tags: ["پایتون", "برنامه‌نویسی سازه", "سازه"]
+categories: ["مهندسی و علم محاسبه"]
 cover: 
     image: "/img/python-structure.webp"
     alt: "python libraries for structural engineers"
