@@ -1,4 +1,8 @@
-.post-content {
+.post-content, .entry-content{
     text-align: justify;
     text-justify: inter-word; /* Improves spacing for justified text */
+}
+
+body {
+    line-height: 2;
 }
