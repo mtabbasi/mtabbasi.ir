@@ -1,0 +1,4 @@
+.post-content {
+    text-align: justify;
+    text-justify: inter-word; /* Improves spacing for justified text */
+}
