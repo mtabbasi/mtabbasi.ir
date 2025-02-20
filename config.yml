@@ -17,6 +17,8 @@ minify:
   disableXML: true
   # minifyOutput: true
 
+defaultContentLanguage: fa
+
 languages:
   en:
     languageName: "En"
